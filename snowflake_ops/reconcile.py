@@ -1,5 +1,4 @@
 import sys
-from datetime import datetime, timezone
 from extract.common import get_mysql_conn
 from snowflake_ops.common import get_snowflake_conn
 from extract.config import PRIMARY_KEYS

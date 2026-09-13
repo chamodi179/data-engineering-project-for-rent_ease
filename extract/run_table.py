@@ -5,7 +5,7 @@ from extract.common import extract_table
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in TABLES:
-        print(f"Usage: python -m extract.run_table <table>")
+        print("Usage: python -m extract.run_table <table>")
         print(f"Valid tables: {', '.join(TABLES)}")
         sys.exit(1)
 
