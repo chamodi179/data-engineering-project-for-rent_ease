@@ -2,6 +2,7 @@ import sys
 from snowflake_ops.common import get_snowflake_conn
 from extract.config import TABLES, PRIMARY_KEYS
 
+
 def dedupe(table: str, conn):
     table_upper = table.upper()
     key_col = PRIMARY_KEYS[table]
@@ -25,13 +26,15 @@ def dedupe(table: str, conn):
         after = cur.fetchone()[0]
 
         removed = before - after
-        print(f"[OK] {table:28} {before:>7} -> {after:>7}  ({removed} duplicate(s) removed)")
+        print(
+            f"[OK] {table:28} {before:>7} -> {after:>7}  ({removed} duplicate(s) removed)")
         return True
     except Exception as e:
         print(f"[FAILED] {table:28} {e}")
         return False
     finally:
         cur.close()
+
 
 def main():
     # optional: pass specific table names as args, e.g. `python -m snowflake_ops.dedupe_all bookings payments`
@@ -55,7 +58,10 @@ def main():
         print(f"\n{failed} table(s) failed to dedupe.")
         sys.exit(1)
     else:
-        print(f"\nAll {len(tables_to_run)} table(s) deduplicated successfully.")
+        print(
+            f"\nAll {
+                len(tables_to_run)} table(s) deduplicated successfully.")
+
 
 if __name__ == "__main__":
     main()

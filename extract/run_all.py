@@ -3,6 +3,7 @@ from extract.config import TABLES
 from extract.common import extract_table
 from extract.state import load_watermarks, save_watermarks
 
+
 def main():
     state = load_watermarks()
     results = {}
@@ -12,7 +13,8 @@ def main():
         lookback = cfg["lookback_days"]
         watermark = state.get(table)
         try:
-            n, new_watermark = extract_table(table, cursor_col, watermark, lookback)
+            n, new_watermark = extract_table(
+                table, cursor_col, watermark, lookback)
             results[table] = ("OK", n)
             print(f"[OK] {table}: {n} rows")
             if not lookback and new_watermark != watermark:
@@ -25,6 +27,7 @@ def main():
     print("\n--- Summary ---")
     for table, (status, detail) in results.items():
         print(f"{status:8} {table:28} {detail}")
+
 
 if __name__ == "__main__":
     main()

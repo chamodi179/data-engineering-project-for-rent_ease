@@ -1,4 +1,9 @@
-import os, boto3, pymysql, csv, io, datetime
+import os
+import boto3
+import pymysql
+import csv
+import io
+import datetime
 from dotenv import load_dotenv
 import datetime
 
@@ -22,7 +27,8 @@ def get_s3_client():
     return boto3.client("s3")
 
 
-def extract_table(table: str, cursor_col: str, watermark: str | None, lookback_days: int | None) -> tuple[int, str | None]:
+def extract_table(table: str, cursor_col: str, watermark: str |
+                  None, lookback_days: int | None) -> tuple[int, str | None]:
     conn = get_mysql_conn()
     try:
         with conn.cursor() as cur:
@@ -31,11 +37,14 @@ def extract_table(table: str, cursor_col: str, watermark: str | None, lookback_d
                 # catches in-place updates on tables with no updated_at column.
                 cutoff = (datetime.datetime.now(datetime.UTC)
                           - datetime.timedelta(days=lookback_days)).strftime("%Y-%m-%d %H:%M:%S")
-                cur.execute(f"SELECT * FROM {table} WHERE {cursor_col} > %s", (cutoff,))
+                cur.execute(
+                    f"SELECT * FROM {table} WHERE {cursor_col} > %s", (cutoff,))
             elif watermark:
-                cur.execute(f"SELECT * FROM {table} WHERE {cursor_col} > %s", (watermark,))
+                cur.execute(
+                    f"SELECT * FROM {table} WHERE {cursor_col} > %s", (watermark,))
             else:
-                cur.execute(f"SELECT * FROM {table}")  # first run: full extract
+                # first run: full extract
+                cur.execute(f"SELECT * FROM {table}")
             rows = cur.fetchall()
             cols = [d[0] for d in cur.description]
     finally:

@@ -4,6 +4,7 @@ from extract.common import get_mysql_conn
 from snowflake_ops.common import get_snowflake_conn
 from extract.config import PRIMARY_KEYS
 
+
 def reconcile(table: str, auto_mark: bool = True) -> int:
     """
     Compares primary keys between MySQL (source of truth) and the Snowflake
@@ -34,10 +35,14 @@ def reconcile(table: str, auto_mark: bool = True) -> int:
 
         orphaned = sf_ids - mysql_ids
         if not orphaned:
-            print(f"[OK] {table}: no orphaned rows — {len(sf_ids)} rows match MySQL")
+            print(
+                f"[OK] {table}: no orphaned rows — {
+                    len(sf_ids)} rows match MySQL")
             return 0
 
-        print(f"[WARNING] {table}: {len(orphaned)} row(s) no longer exist in MySQL")
+        print(
+            f"[WARNING] {table}: {
+                len(orphaned)} row(s) no longer exist in MySQL")
 
         if auto_mark:
             ids_list = ",".join(str(i) for i in orphaned)
@@ -47,7 +52,9 @@ def reconcile(table: str, auto_mark: bool = True) -> int:
                 WHERE {key_col} IN ({ids_list})
             """)
             sf_conn.commit()
-            print(f"[MARKED] {table}: {len(orphaned)} row(s) marked is_deleted=TRUE")
+            print(
+                f"[MARKED] {table}: {
+                    len(orphaned)} row(s) marked is_deleted=TRUE")
         else:
             print(f"  Orphaned {key_col}s: {sorted(orphaned)[:20]}")
 
@@ -55,6 +62,7 @@ def reconcile(table: str, auto_mark: bool = True) -> int:
     finally:
         sf_cur.close()
         sf_conn.close()
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:

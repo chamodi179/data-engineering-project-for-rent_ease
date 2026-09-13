@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 def get_snowflake_conn():
     return snowflake.connector.connect(
         account=os.environ["SNOWFLAKE_ACCOUNT"],

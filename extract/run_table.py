@@ -2,6 +2,7 @@ import sys
 from extract.config import TABLES
 from extract.common import extract_table
 
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in TABLES:
         print(f"Usage: python -m extract.run_table <table>")
@@ -15,6 +16,7 @@ def main():
     except Exception as e:
         print(f"[FAILED] {table}: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 import sys
 from snowflake_ops.common import get_snowflake_conn
 
+
 def dedupe(table: str, key_col: str = "id"):
     table_upper = table.upper()
     conn = get_snowflake_conn()
@@ -23,6 +24,7 @@ def dedupe(table: str, key_col: str = "id"):
     finally:
         cur.close()
         conn.close()
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
