@@ -13,7 +13,7 @@ jobs:
       - name: Decode SSH key
         run: |
           echo "${{ secrets.EC2_SSH_KEY }}" | base64 -d > deploy_key
-          chmod 600 deploy_key
+          chmod 644 deploy_key
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
