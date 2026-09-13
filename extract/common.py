@@ -8,18 +8,22 @@ import datetime
 
 load_dotenv()
 
-DB_HOST = os.environ["DB_HOST"]
-DB_USER = os.environ["DB_READONLY_USER"]
-DB_PASSWORD = os.environ["DB_READONLY_PASSWORD"]
 DB_NAME = "rentease"
-S3_BUCKET = os.environ["S3_RAW_BUCKET"]
 
 
 def get_mysql_conn():
     return pymysql.connect(
-        host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME,
-        ssl={"ssl": {}}, cursorclass=pymysql.cursors.Cursor,
+        host=os.environ["DB_HOST"],
+        user=os.environ["DB_READONLY_USER"],
+        password=os.environ["DB_READONLY_PASSWORD"],
+        database=DB_NAME,
+        ssl={"ssl": {}},
+        cursorclass=pymysql.cursors.Cursor,
     )
+
+
+def get_s3_bucket():
+    return os.environ["S3_RAW_BUCKET"]
 
 
 def get_s3_client():
@@ -64,7 +68,7 @@ def extract_table(table: str, cursor_col: str, watermark: str |
 
     ts = datetime.datetime.now(datetime.UTC).strftime("%Y%m%d%H%M%S")
     key = f"mysql/{table}/{table}_{ts}.csv"
-    get_s3_client().put_object(Bucket=S3_BUCKET, Key=key, Body=buf.getvalue())
+    get_s3_client().put_object(Bucket=get_s3_bucket(), Key=key, Body=buf.getvalue())
 
     return len(rows), new_watermark
     """Extracts one table (full extract) and uploads it to S3. Returns row count."""
@@ -86,6 +90,5 @@ def extract_table(table: str, cursor_col: str, watermark: str |
     key = f"mysql/{table}/{table}_{ts}.csv"
 
     s3 = get_s3_client()
-    s3.put_object(Bucket=S3_BUCKET, Key=key, Body=buf.getvalue())
-
+    s3.put_object(Bucket=get_s3_bucket(), Key=key, Body=buf.getvalue())
     return len(rows)
