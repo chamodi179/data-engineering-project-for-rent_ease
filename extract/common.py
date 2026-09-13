@@ -3,7 +3,6 @@ import boto3
 import pymysql
 import csv
 import io
-import datetime
 from dotenv import load_dotenv
 import datetime
 
