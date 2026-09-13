@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+
+      - name: Lint with flake8
+        run: flake8 extract/ snowflake_ops/ --max-line-length=120
+
+      - name: Check imports resolve (syntax/module sanity check)
+        run: |
+          python -c "from extract.config import TABLES, PRIMARY_KEYS; print('extract.config OK')"
+          python -c "from extract import common, state; print('extract modules OK')"
+          python -c "from snowflake_ops import common; print('snowflake_ops modules OK')"
