@@ -24,6 +24,5 @@ jobs:
           script: |
             cd ~/data-engineering-project-for-rent_ease
             git pull origin main
-            cd docker
             docker compose up -d --build
             echo "Deployed: $(git rev-parse --short HEAD)"
