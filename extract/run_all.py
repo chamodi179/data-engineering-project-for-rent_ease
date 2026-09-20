@@ -1,33 +1,21 @@
-# extract/run_all.py — pass lookback_days through
-from extract.config import TABLES
-from extract.common import extract_table
-from extract.state import load_watermarks, save_watermarks
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime
+import sys
 
+sys.path.append("/opt/rentease")  # repo root is mounted here
 
-def main():
-    state = load_watermarks()
-    results = {}
+from extract.run_all import main as run_all_extracts
 
-    for table, cfg in TABLES.items():
-        cursor_col = cfg["cursor"]
-        lookback = cfg["lookback_days"]
-        watermark = state.get(table)
-        try:
-            n, new_watermark = extract_table(
-                table, cursor_col, watermark, lookback)
-            results[table] = ("OK", n)
-            print(f"[OK] {table}: {n} rows")
-            if not lookback and new_watermark != watermark:
-                state[table] = new_watermark
-                save_watermarks(state)
-        except Exception as e:
-            results[table] = ("FAILED", str(e))
-            print(f"[FAILED] {table}: {e}")
+with DAG(
+    dag_id="rentease_extract_all",
+    start_date=datetime(2026, 1, 1),
+    schedule="@daily",
+    catchup=False,
+    tags=["rentease", "extract"],
+) as dag:
 
-    print("\n--- Summary ---")
-    for table, (status, detail) in results.items():
-        print(f"{status:8} {table:28} {detail}")
-
-
-if __name__ == "__main__":
-    main()
+    extract_task = PythonOperator(
+        task_id="extract_all_tables",
+        python_callable=run_all_extracts,
+    )
