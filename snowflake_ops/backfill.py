@@ -1,6 +1,7 @@
 import sys
 from snowflake_ops.common import get_snowflake_conn
 
+
 def backfill(table: str):
     table_upper = table.upper()
     conn = get_snowflake_conn()
