@@ -27,4 +27,3 @@ if __name__ == "__main__":
         print("Usage: python -m snowflake_ops.backfill <table>")
         sys.exit(1)
     backfill(sys.argv[1])
-

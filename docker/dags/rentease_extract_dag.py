@@ -3,12 +3,12 @@ from airflow.operators.python import PythonOperator
 from datetime import datetime
 import sys
 
-sys.path.append("/opt/rentease")  # so it can import your extract/ scripts
+sys.path.append("/opt/rentease")  # repo root is mounted here
 
-from extract.extract_bookings import extract_bookings
+from extract.run_all import main as run_all_extracts  # noqa: E402
 
 with DAG(
-    dag_id="rentease_extract_bookings",
+    dag_id="rentease_extract_all",
     start_date=datetime(2026, 1, 1),
     schedule="@daily",
     catchup=False,
@@ -16,6 +16,6 @@ with DAG(
 ) as dag:
 
     extract_task = PythonOperator(
-        task_id="extract_bookings",
-        python_callable=extract_bookings,
+        task_id="extract_all_tables",
+        python_callable=run_all_extracts,
     )
