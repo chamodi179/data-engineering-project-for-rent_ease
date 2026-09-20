@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  airflow:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./docker/dags:/opt/airflow/dags
+      - .:/opt/rentease   # the whole repo, including extract/ and snowflake_ops/
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    command: standalone
