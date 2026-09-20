@@ -21,7 +21,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-
 # run any single table any time.
 # python -m extract.run_table bookings
 # python -m extract.run_table users
